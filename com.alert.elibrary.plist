@@ -7,12 +7,12 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/Users/htdocs/alert/check_uptime.py</string>
+        <string>/Users/htdocs/website-down-and-up-alert/check_uptime.py</string>
         <string>--loop</string>
         <string>15</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/Users/htdocs/alert</string>
+    <string>/Users/htdocs/website-down-and-up-alert</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
@@ -24,8 +24,8 @@
         <string>Aqua</string>
     </array>
     <key>StandardOutPath</key>
-    <string>/Users/htdocs/alert/launchd.out.log</string>
+    <string>/Users/htdocs/website-down-and-up-alert/launchd.out.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/htdocs/alert/launchd.err.log</string>
+    <string>/Users/htdocs/website-down-and-up-alert/launchd.err.log</string>
 </dict>
 </plist>
