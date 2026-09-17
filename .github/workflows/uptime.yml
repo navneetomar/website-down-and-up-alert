@@ -1,0 +1,33 @@
+name: Uptime check
+
+on:
+  schedule:
+    # Every 5 minutes, the fastest interval GitHub allows.
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: uptime-check
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Probe site
+        id: probe
+        run: python .github/scripts/ci_probe.py
+
+      - name: Report status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UP: ${{ steps.probe.outputs.up }}
+          DETAIL: ${{ steps.probe.outputs.detail }}
+          SITE: ${{ steps.probe.outputs.url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: .github/scripts/report.sh
