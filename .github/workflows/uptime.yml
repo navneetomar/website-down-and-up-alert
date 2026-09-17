@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 concurrency:
@@ -31,3 +31,25 @@ jobs:
           SITE: ${{ steps.probe.outputs.url }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: .github/scripts/report.sh
+
+      - name: Check out status branch
+        uses: actions/checkout@v7
+        with:
+          ref: status
+          path: site
+
+      - name: Build status page
+        env:
+          UP: ${{ steps.probe.outputs.up }}
+          DETAIL: ${{ steps.probe.outputs.detail }}
+          SITE: ${{ steps.probe.outputs.url }}
+        run: python .github/scripts/build_status.py
+
+      - name: Publish status page
+        working-directory: site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --quiet --cached || git commit -m "Update status $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
