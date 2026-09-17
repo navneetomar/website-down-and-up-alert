@@ -19,7 +19,6 @@ TEMPLATE = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="refresh" content="300" />
   <title>eLibrary Sansad Status</title>
   <style>
     :root {
@@ -90,46 +89,66 @@ TEMPLATE = """<!DOCTYPE html>
       <thead><tr><th>When</th><th>Status</th><th>Detail</th></tr></thead>
       <tbody id="events"><tr><td colspan="3">No changes recorded yet.</td></tr></tbody>
     </table>
+    <div class="label" style="margin-top:18px">Refreshed <span id="refreshed">just now</span> · updates automatically every minute</div>
   </div>
   <script id="data" type="application/json">__DATA__</script>
   <script>
-    const data = JSON.parse(document.getElementById('data').textContent);
-    const history = data.history || [];
     const fmt = iso => new Date(iso).toLocaleString();
+    const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    const link = document.getElementById('siteLink');
-    link.href = data.site_url;
-    link.textContent = (data.site_url || '').replace(/^https?:\\/\\//, '');
+    function render(data) {
+      const history = data.history || [];
 
-    const current = document.getElementById('current');
-    if (data.up === true) { current.textContent = 'UP'; current.className = 'count up'; }
-    else if (data.up === false) { current.textContent = 'DOWN'; current.className = 'count down'; }
+      const link = document.getElementById('siteLink');
+      link.href = data.site_url;
+      link.textContent = (data.site_url || '').replace(/^https?:\\/\\//, '');
 
-    document.getElementById('window').textContent = history.length;
-    if (history.length) {
-      const ups = history.filter(h => h.up).length;
-      document.getElementById('uptime').textContent = (ups / history.length * 100).toFixed(1) + '%';
-      document.getElementById('oldest').textContent = fmt(history[0].at);
-      document.getElementById('newest').textContent = fmt(history[history.length - 1].at);
+      const current = document.getElementById('current');
+      if (data.up === true) { current.textContent = 'UP'; current.className = 'count up'; }
+      else if (data.up === false) { current.textContent = 'DOWN'; current.className = 'count down'; }
+
+      document.getElementById('window').textContent = history.length;
+      if (history.length) {
+        const ups = history.filter(h => h.up).length;
+        document.getElementById('uptime').textContent = (ups / history.length * 100).toFixed(1) + '%';
+        document.getElementById('oldest').textContent = fmt(history[0].at);
+        document.getElementById('newest').textContent = fmt(history[history.length - 1].at);
+      }
+      if (data.checked_at) document.getElementById('checked').textContent = fmt(data.checked_at);
+      document.getElementById('detail').textContent = data.detail || '';
+
+      const bars = document.getElementById('bars');
+      bars.innerHTML = '';
+      history.forEach(h => {
+        const bar = document.createElement('div');
+        bar.className = 'bar' + (h.up ? '' : ' off');
+        bar.title = fmt(h.at) + ' — ' + (h.up ? 'UP' : 'DOWN') + ' (' + h.detail + ')';
+        bars.appendChild(bar);
+      });
+
+      const changes = history.filter((h, i) => i > 0 && h.up !== history[i - 1].up).reverse();
+      document.getElementById('events').innerHTML = changes.length
+        ? changes.map(h =>
+            '<tr><td>' + esc(fmt(h.at)) + '</td><td class="' + (h.up ? 'up' : 'down') + '">' +
+            (h.up ? 'Recovered' : 'Went down') + '</td><td class="mono">' + esc(h.detail) + '</td></tr>'
+          ).join('')
+        : '<tr><td colspan="3">No changes recorded yet.</td></tr>';
+
+      document.getElementById('refreshed').textContent = new Date().toLocaleTimeString();
     }
-    if (data.checked_at) document.getElementById('checked').textContent = fmt(data.checked_at);
-    document.getElementById('detail').textContent = data.detail || '';
 
-    const bars = document.getElementById('bars');
-    history.forEach(h => {
-      const bar = document.createElement('div');
-      bar.className = 'bar' + (h.up ? '' : ' off');
-      bar.title = fmt(h.at) + ' — ' + (h.up ? 'UP' : 'DOWN') + ' (' + h.detail + ')';
-      bars.appendChild(bar);
-    });
+    render(JSON.parse(document.getElementById('data').textContent));
 
-    const changes = history.filter((h, i) => i > 0 && h.up !== history[i - 1].up).reverse();
-    if (changes.length) {
-      document.getElementById('events').innerHTML = changes.map(h =>
-        '<tr><td>' + fmt(h.at) + '</td><td class="' + (h.up ? 'up' : 'down') + '">' +
-        (h.up ? 'Recovered' : 'Went down') + '</td><td class="mono">' + h.detail + '</td></tr>'
-      ).join('');
+    // The Pages CDN caches for 10 minutes, so bust it with a unique query per poll.
+    async function poll() {
+      try {
+        const res = await fetch('status.json?t=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) render(await res.json());
+      } catch (err) {
+        /* keep the last good data on screen */
+      }
     }
+    setInterval(poll, 60000);
   </script>
 </body>
 </html>
