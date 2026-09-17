@@ -29,9 +29,45 @@ DIR = Path(__file__).resolve().parent
 STATE_PATH = DIR / "state.json"
 LOG_PATH = DIR / "alert.log"
 
+MAX_LOG_LINES = 30
+# Routine UP lines are dropped once the log grows; these stay forever.
+KEEP_MARKERS = ("DOWN", "SKIP", "ERROR", "RECOVERED", "baseline")
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+
+
+def is_prunable(line: str) -> bool:
+    return not any(marker in line for marker in KEEP_MARKERS)
+
+
+def prune_lines(lines: list[str]) -> list[str]:
+    excess = len(lines) - MAX_LOG_LINES
+    if excess <= 0:
+        return lines
+    drop = min(excess, sum(1 for line in lines if is_prunable(line)))
+    kept = []
+    for line in lines:
+        if drop and is_prunable(line):
+            drop -= 1
+            continue
+        kept.append(line)
+    return kept
+
+
+def trim_log() -> None:
+    try:
+        lines = LOG_PATH.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return
+    kept = prune_lines(lines)
+    if len(kept) == len(lines):
+        return
+    try:
+        LOG_PATH.write_text("\n".join(kept) + "\n", encoding="utf-8")
+    except OSError:
+        pass
 
 
 def log(message: str) -> None:
@@ -39,6 +75,7 @@ def log(message: str) -> None:
     print(line)
     with LOG_PATH.open("a", encoding="utf-8") as fh:
         fh.write(line + "\n")
+    trim_log()
 
 
 def load_state() -> dict:
