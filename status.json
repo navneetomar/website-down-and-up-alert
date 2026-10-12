@@ -2,8 +2,8 @@
   "site_url": "https://elibrary.sansad.in",
   "up": false,
   "detail": "Remote end closed connection without response",
-  "checked_at": "2026-10-12T16:03:04+00:00",
-  "checks": 143,
+  "checked_at": "2026-10-12T22:52:58+00:00",
+  "checks": 144,
   "history": [
     {
       "at": "2026-09-17T09:09:26+00:00",
@@ -717,6 +717,11 @@
     },
     {
       "at": "2026-10-12T16:03:04+00:00",
+      "up": false,
+      "detail": "Remote end closed connection without response"
+    },
+    {
+      "at": "2026-10-12T22:52:58+00:00",
       "up": false,
       "detail": "Remote end closed connection without response"
     }
