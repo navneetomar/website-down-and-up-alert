@@ -863,5 +863,10 @@
     "at": "2026-10-17T17:58:17+00:00",
     "up": true,
     "detail": "HTTP 200"
+  },
+  {
+    "at": "2026-10-17T20:15:03+00:00",
+    "up": false,
+    "detail": "<urlopen error timed out>"
   }
 ]
