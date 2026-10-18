@@ -2,8 +2,8 @@
   "site_url": "https://elibrary.sansad.in",
   "up": false,
   "detail": "<urlopen error timed out>",
-  "checked_at": "2026-10-17T22:21:27+00:00",
-  "checks": 175,
+  "checked_at": "2026-10-18T00:07:28+00:00",
+  "checks": 176,
   "history": [
     {
       "at": "2026-09-17T09:09:26+00:00",
@@ -877,6 +877,11 @@
     },
     {
       "at": "2026-10-17T22:21:27+00:00",
+      "up": false,
+      "detail": "<urlopen error timed out>"
+    },
+    {
+      "at": "2026-10-18T00:07:28+00:00",
       "up": false,
       "detail": "<urlopen error timed out>"
     }
