@@ -2,8 +2,8 @@
   "site_url": "https://elibrary.sansad.in",
   "up": true,
   "detail": "HTTP 200",
-  "checked_at": "2026-11-02T23:40:27+00:00",
-  "checks": 265,
+  "checked_at": "2026-11-03T04:01:46+00:00",
+  "checks": 266,
   "history": [
     {
       "at": "2026-09-17T09:09:26+00:00",
@@ -1327,6 +1327,11 @@
     },
     {
       "at": "2026-11-02T23:40:27+00:00",
+      "up": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "at": "2026-11-03T04:01:46+00:00",
       "up": true,
       "detail": "HTTP 200"
     }
