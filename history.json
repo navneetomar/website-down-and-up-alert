@@ -1,10 +1,5 @@
 [
   {
-    "at": "2026-09-18T18:17:27+00:00",
-    "up": true,
-    "detail": "HTTP 200"
-  },
-  {
     "at": "2026-09-18T20:59:29+00:00",
     "up": false,
     "detail": "The read operation timed out"
@@ -1436,6 +1431,11 @@
   },
   {
     "at": "2026-11-11T09:03:59+00:00",
+    "up": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "at": "2026-11-11T17:02:32+00:00",
     "up": true,
     "detail": "HTTP 200"
   }
