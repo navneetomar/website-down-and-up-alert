@@ -1,10 +1,5 @@
 [
   {
-    "at": "2026-09-24T21:03:32+00:00",
-    "up": true,
-    "detail": "HTTP 200"
-  },
-  {
     "at": "2026-09-24T23:50:32+00:00",
     "up": true,
     "detail": "HTTP 200"
@@ -1436,6 +1431,11 @@
   },
   {
     "at": "2026-11-22T15:43:46+00:00",
+    "up": false,
+    "detail": "<urlopen error timed out>"
+  },
+  {
+    "at": "2026-11-22T21:17:25+00:00",
     "up": false,
     "detail": "<urlopen error timed out>"
   }
